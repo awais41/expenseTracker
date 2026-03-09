@@ -37,11 +37,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final insight = buildInsight(widget.expenseBloc, _selectedPeriod == 1);
 
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [AppColors.background, Color(0xFF020403)],
+          colors: [AppColors.background, AppColors.screenGradientEnd],
         ),
       ),
       child: SafeArea(
@@ -56,12 +56,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     children: [
                       IconButton(
                         onPressed: widget.onBackToHome,
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.arrow_back,
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'Spending Analytics',
                           textAlign: TextAlign.center,
@@ -72,7 +72,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           ),
                         ),
                       ),
-                      const Icon(
+                      Icon(
                         Icons.calendar_month_outlined,
                         color: AppColors.textPrimary,
                       ),
@@ -85,7 +85,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         setState(() => _selectedPeriod = value),
                   ),
                   const SizedBox(height: 14),
-                  const Divider(color: AppColors.border, height: 1),
+                  Divider(color: AppColors.border, height: 1),
                   const SizedBox(height: 18),
                   _AnalyticsSectionHeader(
                     title: 'Spending Trend',
@@ -158,7 +158,7 @@ class _AnalyticsSectionHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textSecondary,
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -169,7 +169,7 @@ class _AnalyticsSectionHeader extends StatelessWidget {
           children: [
             Text(
               amount,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 36,
                 fontWeight: FontWeight.w700,

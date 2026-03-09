@@ -12,11 +12,11 @@ class OnboardingScreen extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF0E1714), AppColors.background],
+          colors: [AppColors.surfaceAlt, AppColors.background],
         ),
       ),
       child: SafeArea(
@@ -72,11 +72,11 @@ class OnboardingScreen extends StatelessWidget {
                               Text(
                                 'Experience the most aesthetic way to\ntrack expenses and grow your savings\nwith luxury precision.',
                                 textAlign: TextAlign.center,
-                                style: textTheme.bodyLarge?.copyWith(
-                                  fontSize: 14,
-                                  height: 1.5,
-                                  color: AppColors.textSecondary,
-                                ),
+                              style: textTheme.bodyLarge?.copyWith(
+                                fontSize: 14,
+                                height: 1.5,
+                                color: AppColors.textSecondary,
+                              ),
                               ),
                             ],
                           ),

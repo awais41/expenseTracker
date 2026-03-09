@@ -27,7 +27,7 @@ class DashboardHeader extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const Text(
+            Text(
               'Expense Tracker',
               style: TextStyle(
                 color: AppColors.textPrimary,
@@ -45,7 +45,7 @@ class DashboardHeader extends StatelessWidget {
             color: AppColors.emerald.withValues(alpha: 0.08),
             shape: BoxShape.circle,
           ),
-          child: const Icon(
+          child: Icon(
             Icons.notifications_none_rounded,
             color: AppColors.textPrimary,
           ),
@@ -94,7 +94,7 @@ class EmptyHomeHero extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          const Text(
+          Text(
             'Your expense story starts here',
             style: TextStyle(
               color: AppColors.textPrimary,
@@ -104,7 +104,7 @@ class EmptyHomeHero extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'There is no sample data anymore. Add your first expense and Home will start filling with totals, trends, and recent activity.',
             style: TextStyle(
               color: AppColors.textSecondary,
@@ -116,7 +116,7 @@ class EmptyHomeHero extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               'Monthly budget: ${_currency(monthlyBudget, currencySymbol)}',
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.emerald,
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
@@ -172,7 +172,7 @@ class QuickStartSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
+      children: [
         Text(
           'Quick Start',
           style: TextStyle(
@@ -229,7 +229,7 @@ class _GuideCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 14,
               fontWeight: FontWeight.w700,
@@ -238,7 +238,7 @@ class _GuideCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             body,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 12,
               height: 1.35,
@@ -261,7 +261,7 @@ class EmptyInsightsSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text(
+              Text(
                 'Insights',
                 style: TextStyle(
                   color: AppColors.textPrimary,
@@ -296,9 +296,9 @@ class EmptyInsightsSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(18),
               border: Border.all(color: AppColors.border),
             ),
-            child: const Column(
+            child: Column(
               children: [
-                Icon(Icons.bar_chart_rounded, color: Colors.white38, size: 32),
+                Icon(Icons.bar_chart_rounded, color: AppColors.textSecondary, size: 32),
                 SizedBox(height: 10),
                 Text(
                   'Charts and summaries will appear after your first few expenses.',
@@ -326,7 +326,7 @@ class EmptyTransactionsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Recent Transactions',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -352,7 +352,7 @@ class EmptyTransactionsSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 'No transactions yet',
                 style: TextStyle(
                   color: AppColors.textPrimary,
@@ -361,7 +361,7 @@ class EmptyTransactionsSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              const Text(
+              Text(
                 'Once you save an expense, it will appear here.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -417,10 +417,10 @@ class SummaryCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'TOTAL SPENDING THIS MONTH',
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: Colors.white,
                   fontSize: 10,
                   letterSpacing: 1.2,
                   fontWeight: FontWeight.w600,
@@ -429,8 +429,8 @@ class SummaryCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 expenseBloc.formatCurrency(total),
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
+                style: TextStyle(
+                  color: Colors.white,
                   fontSize: 32,
                   fontWeight: FontWeight.w800,
                   height: 1.05,
@@ -443,6 +443,7 @@ class SummaryCard extends StatelessWidget {
                     child: _MetricColumn(
                       label: 'DAILY AVERAGE',
                       value: expenseBloc.formatCurrency(average),
+                      valueColor: Colors.white,
                     ),
                   ),
                   Expanded(
@@ -467,12 +468,12 @@ class SummaryCard extends StatelessWidget {
 }
 
 class _MetricColumn extends StatelessWidget {
-  const _MetricColumn({
+  _MetricColumn({
     required this.label,
     required this.value,
-    this.valueColor = AppColors.textPrimary,
+    Color? valueColor,
     this.icon,
-  });
+  }) : valueColor = valueColor ?? AppColors.textPrimary;
 
   final String label;
   final String value;
@@ -486,8 +487,8 @@ class _MetricColumn extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.white60,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.72),
             fontSize: 9,
             fontWeight: FontWeight.w700,
           ),
@@ -596,8 +597,8 @@ class MiniStatCard extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
-                color: Colors.white38,
+              style: TextStyle(
+                color: AppColors.textSecondary,
                 fontSize: 9,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1,
@@ -606,7 +607,7 @@ class MiniStatCard extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
@@ -620,7 +621,7 @@ class MiniStatCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               footer,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.lime,
                 fontSize: 9,
                 fontWeight: FontWeight.w700,
@@ -685,7 +686,7 @@ class FlowAnalysisCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text(
+              Text(
                 'Flow Analysis',
                 style: TextStyle(
                   color: AppColors.textPrimary,
@@ -700,7 +701,7 @@ class FlowAnalysisCard extends StatelessWidget {
                   color: AppColors.emerald.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Text(
+                child: Text(
                   'This Week',
                   style: TextStyle(
                     color: AppColors.emerald,
@@ -741,8 +742,8 @@ class FlowAnalysisCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         labels[index],
-                        style: const TextStyle(
-                          color: Colors.white54,
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
                         ),
@@ -783,7 +784,7 @@ class CategoryBreakdownSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Category Breakdown',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -804,7 +805,7 @@ class CategoryBreakdownSection extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
+                        Text(
                           'Top',
                           style: TextStyle(
                             color: AppColors.textPrimary,
@@ -814,8 +815,8 @@ class CategoryBreakdownSection extends StatelessWidget {
                         ),
                         Text(
                           topThree.isEmpty ? 'None' : topThree.first.key,
-                          style: const TextStyle(
-                            color: Colors.white70,
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
                             fontSize: 9,
                           ),
                         ),
@@ -882,12 +883,12 @@ class BreakdownLegend extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(color: Colors.white70, fontSize: 11),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
           ),
         ),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 11,
             fontWeight: FontWeight.w700,
@@ -913,7 +914,7 @@ class TransactionsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           children: [
             Text(
               'Recent Transactions',
@@ -961,7 +962,7 @@ class TransactionsSection extends StatelessWidget {
                     children: [
                       Text(
                         expense.note.isEmpty ? expense.category : expense.note,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -970,8 +971,8 @@ class TransactionsSection extends StatelessWidget {
                       const SizedBox(height: 1),
                       Text(
                         '${expense.category} • ${_dateLabel(expense.date)}',
-                        style: const TextStyle(
-                          color: Color(0xFF64748B),
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
                           fontSize: 10,
                         ),
                       ),
@@ -980,7 +981,7 @@ class TransactionsSection extends StatelessWidget {
                 ),
                 Text(
                   '-${expenseBloc.formatCurrency(expense.amount)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,

@@ -32,7 +32,7 @@ class AnalyticsPeriodToggle extends StatelessWidget {
                 Text(
                   labels[index],
                   style: TextStyle(
-                    color: selected ? AppColors.emeraldSoft : Colors.white54,
+                    color: selected ? AppColors.emeraldSoft : AppColors.textSecondary,
                     fontSize: 15,
                     fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                   ),
@@ -93,10 +93,10 @@ class SpendingTrendChart extends StatelessWidget {
     return GlassCard(
       radius: 18,
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 18),
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF0A1F19), Color(0xFF06110E)],
+        colors: [AppColors.chartCardStart, AppColors.chartCardEnd],
       ),
       child: Column(
         children: [
@@ -137,8 +137,8 @@ class _AxisLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label,
-      style: const TextStyle(
-        color: Colors.white60,
+      style: TextStyle(
+        color: AppColors.textSecondary,
         fontSize: 12,
         fontWeight: FontWeight.w500,
       ),
@@ -161,8 +161,8 @@ class CategoryStrip extends StatelessWidget {
               child: Text(
                 label.toUpperCase(),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white60,
+                style: TextStyle(
+                  color: AppColors.textSecondary,
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
                 ),
@@ -188,10 +188,10 @@ class SmartInsightCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassCard(
       radius: 18,
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF121F18), Color(0xFF091411)],
+        colors: [AppColors.insightCardStart, AppColors.insightCardEnd],
       ),
       child: Stack(
         children: [
@@ -229,7 +229,7 @@ class SmartInsightCard extends StatelessWidget {
               const SizedBox(height: 18),
               Text(
                 insightTitle,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textPrimary,
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
@@ -238,7 +238,7 @@ class SmartInsightCard extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 insightBody,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 16,
                   height: 1.55,
@@ -275,9 +275,9 @@ class EmptyAnalyticsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassCard(
       radius: 18,
-      child: const Column(
+      child: Column(
         children: [
-          Icon(Icons.insights_outlined, color: Colors.white38, size: 36),
+          Icon(Icons.insights_outlined, color: AppColors.textSecondary, size: 36),
           SizedBox(height: 14),
           Text(
             'Add a few expenses to unlock analytics.',
@@ -306,10 +306,10 @@ class _TrendPainter extends CustomPainter {
     }
 
     final background = Paint()
-      ..shader = const LinearGradient(
+      ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [Color(0x2200FFAA), Color(0x0000FFAA)],
+        colors: [AppColors.chartFillStart, AppColors.chartFillEnd],
       ).createShader(Offset.zero & size);
     canvas.drawRRect(
       RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(18)),
@@ -339,13 +339,13 @@ class _TrendPainter extends CustomPainter {
     }
 
     final glowPaint = Paint()
-      ..color = AppColors.emerald.withValues(alpha: 0.35)
-      ..strokeWidth = 10
+      ..color = AppColors.chartGlow
+      ..strokeWidth = AppColors.isDarkMode ? 10 : 6
       ..style = PaintingStyle.stroke
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
     final linePaint = Paint()
-      ..shader = const LinearGradient(
-        colors: [Color(0xFF21F4A3), Color(0xFF31D681)],
+      ..shader = LinearGradient(
+        colors: [AppColors.chartLineStart, AppColors.chartLineEnd],
       ).createShader(Offset.zero & size)
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;

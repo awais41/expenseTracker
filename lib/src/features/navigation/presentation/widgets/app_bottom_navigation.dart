@@ -25,7 +25,7 @@ class AppBottomNavigation extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 14),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xF2121514),
+        color: AppColors.navBackground,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: AppColors.border),
       ),
@@ -34,7 +34,9 @@ class AppBottomNavigation extends StatelessWidget {
         children: List.generate(items.length, (index) {
           final item = items[index];
           final active = currentIndex == index;
-          final color = active ? AppColors.emeraldSoft : Colors.white30;
+          final color = active
+              ? AppColors.emeraldSoft
+              : AppColors.textSecondary.withValues(alpha: 0.72);
           return InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: () => onTap(index),

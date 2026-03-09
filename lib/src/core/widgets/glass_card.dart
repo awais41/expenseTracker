@@ -24,15 +24,15 @@ class GlassCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(radius),
         gradient:
             gradient ??
-            const LinearGradient(
+            LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [AppColors.surfaceAlt, AppColors.surface],
             ),
         border: Border.all(color: AppColors.border),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x26000000),
+            color: AppColors.shadow,
             blurRadius: 24,
             offset: Offset(0, 12),
           ),

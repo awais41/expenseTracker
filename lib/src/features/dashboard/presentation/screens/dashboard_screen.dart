@@ -24,11 +24,11 @@ class DashboardScreen extends StatelessWidget {
     final hasExpenses = expenses.isNotEmpty;
 
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [AppColors.background, Color(0xFF050706)],
+          colors: [AppColors.background, AppColors.screenGradientEnd],
         ),
       ),
       child: SafeArea(
@@ -99,7 +99,7 @@ class DashboardScreen extends StatelessWidget {
           controller: controller,
           autofocus: true,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          style: const TextStyle(color: AppColors.textPrimary),
+          style: TextStyle(color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: '0.00',
             prefixText: '${expenseBloc.currencySymbol} ',

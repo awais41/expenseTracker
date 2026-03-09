@@ -24,11 +24,11 @@ class BudgetScreen extends StatelessWidget {
         : (monthlySpent / monthlyBudget).clamp(0.0, 1.0);
 
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [AppColors.background, Color(0xFF020403)],
+          colors: [AppColors.background, AppColors.screenGradientEnd],
         ),
       ),
       child: SafeArea(
@@ -54,7 +54,7 @@ class BudgetScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          const Text(
+                          Text(
                             'Current Balance',
                             style: TextStyle(
                               color: AppColors.textSecondary,
@@ -64,7 +64,7 @@ class BudgetScreen extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             expenseBloc.formatCurrency(currentBalance),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.textPrimary,
                               fontSize: 32,
                               fontWeight: FontWeight.w800,
@@ -81,7 +81,7 @@ class BudgetScreen extends StatelessWidget {
                           shape: BoxShape.circle,
                           border: Border.all(color: AppColors.border),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.notifications_none_rounded,
                           color: AppColors.textPrimary,
                         ),
@@ -123,7 +123,7 @@ class BudgetScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   Row(
                     children: [
-                      const Text(
+                      Text(
                         'Monthly Categories',
                         style: TextStyle(
                           color: AppColors.textPrimary,
@@ -185,7 +185,7 @@ class BudgetScreen extends StatelessWidget {
           controller: controller,
           autofocus: true,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          style: const TextStyle(color: AppColors.textPrimary),
+          style: TextStyle(color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: '0.00',
             prefixText: '${expenseBloc.currencySymbol} ',
@@ -234,7 +234,7 @@ class BudgetScreen extends StatelessWidget {
           controller: controller,
           autofocus: true,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          style: const TextStyle(color: AppColors.textPrimary),
+          style: TextStyle(color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: '0.00',
             prefixText: '${expenseBloc.currencySymbol} ',
@@ -286,7 +286,7 @@ class BudgetScreen extends StatelessWidget {
                 (category) => ListTile(
                   title: Text(
                     category,
-                    style: const TextStyle(color: AppColors.textPrimary),
+                    style: TextStyle(color: AppColors.textPrimary),
                   ),
                   subtitle: Text(
                     expenseBloc.categoryBudget(category) > 0
@@ -358,14 +358,14 @@ class BudgetScreen extends StatelessWidget {
             TextField(
               controller: nameController,
               autofocus: true,
-              style: const TextStyle(color: AppColors.textPrimary),
+              style: TextStyle(color: AppColors.textPrimary),
               decoration: const InputDecoration(hintText: 'Category name'),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: budgetController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              style: const TextStyle(color: AppColors.textPrimary),
+              style: TextStyle(color: AppColors.textPrimary),
               decoration: InputDecoration(
                 hintText: '0.00',
                 prefixText: '${expenseBloc.currencySymbol} ',
@@ -417,6 +417,12 @@ class _TopBudgetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final titleColor = bright
+        ? AppColors.textPrimary.withValues(alpha: 0.8)
+        : Colors.white.withValues(alpha: 0.72);
+    final valueColor = bright ? AppColors.textPrimary : Colors.white;
+    final iconColor = bright ? AppColors.textPrimary : AppColors.emerald;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(18),
@@ -434,24 +440,22 @@ class _TopBudgetCard extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: bright ? AppColors.textPrimary : AppColors.emerald,
+              color: iconColor,
               size: 22,
             ),
             const SizedBox(height: 16),
             Text(
               title,
               style: TextStyle(
-                color: bright
-                    ? AppColors.textPrimary.withValues(alpha: 0.8)
-                    : AppColors.textSecondary,
+                color: titleColor,
                 fontSize: 15,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               value,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
+              style: TextStyle(
+                color: valueColor,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
@@ -472,6 +476,7 @@ class _GoalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final percent = (progress * 100).round();
+    const darkCardText = Colors.white;
     return GlassCard(
       radius: 20,
       gradient: const LinearGradient(
@@ -497,10 +502,10 @@ class _GoalCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Monthly Goal',
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: darkCardText,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -520,7 +525,7 @@ class _GoalCard extends StatelessWidget {
                     OutlinedButton(
                       onPressed: onTap,
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.textPrimary,
+                        foregroundColor: darkCardText,
                         side: BorderSide(
                           color: Colors.white.withValues(alpha: 0.22),
                         ),
@@ -547,12 +552,12 @@ class _GoalCard extends StatelessWidget {
                       value: math.max(progress, 0.02),
                       strokeWidth: 6,
                       backgroundColor: Colors.white.withValues(alpha: 0.12),
-                      valueColor: const AlwaysStoppedAnimation(AppColors.emerald),
+                      valueColor: AlwaysStoppedAnimation(AppColors.emerald),
                     ),
                     Text(
                       '${percent.clamp(0, 100)}%',
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
+                      style: TextStyle(
+                        color: darkCardText,
                         fontWeight: FontWeight.w700,
                         fontSize: 10,
                       ),
@@ -589,6 +594,9 @@ class _BudgetCategoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final safeBudget = budget <= 0 ? 1.0 : budget;
     final progress = (spent / safeBudget).clamp(0.0, 1.0);
+    final isDarkMode = AppColors.isDarkMode;
+    final titleColor = isDarkMode ? Colors.white : AppColors.textPrimary;
+    final amountColor = isDarkMode ? Colors.white : AppColors.textPrimary;
     final status = budget <= 0
         ? 'Set a budget'
         : progress >= 0.9
@@ -597,7 +605,7 @@ class _BudgetCategoryTile extends StatelessWidget {
         ? 'Watch out'
         : 'On track';
     final statusColor = budget <= 0
-        ? Colors.white54
+        ? (isDarkMode ? Colors.white60 : AppColors.textSecondary)
         : progress >= 0.9
         ? const Color(0xFFFF6666)
         : progress >= 0.75
@@ -607,8 +615,10 @@ class _BudgetCategoryTile extends StatelessWidget {
     return GlassCard(
       radius: 18,
       padding: const EdgeInsets.all(16),
-      gradient: const LinearGradient(
-        colors: [Color(0xFF081310), Color(0xFF060B0A)],
+      gradient: LinearGradient(
+        colors: isDarkMode
+            ? const [Color(0xFF081310), Color(0xFF060B0A)]
+            : const [Colors.white, Color(0xFFF6FAF8)],
       ),
       child: Column(
         children: [
@@ -637,8 +647,8 @@ class _BudgetCategoryTile extends StatelessWidget {
                             category,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
+                            style: TextStyle(
+                              color: titleColor,
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                             ),
@@ -651,8 +661,8 @@ class _BudgetCategoryTile extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.right,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
+                            style: TextStyle(
+                              color: amountColor,
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                             ),
@@ -682,7 +692,9 @@ class _BudgetCategoryTile extends StatelessWidget {
             child: LinearProgressIndicator(
               minHeight: 8,
               value: budget <= 0 ? 0 : progress,
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
+              backgroundColor: isDarkMode
+                  ? Colors.white.withValues(alpha: 0.18)
+                  : AppColors.textSecondary.withValues(alpha: 0.14),
               valueColor: AlwaysStoppedAnimation(color),
             ),
           ),

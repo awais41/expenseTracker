@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -252,6 +254,82 @@ void main() {
 
     expect(find.text('Select Currency'), findsOneWidget);
     expect(find.widgetWithText(ListTile, 'USD • US Dollar'), findsOneWidget);
+  });
+
+  testWidgets('app starts in dark mode by default when no theme preference exists', (
+    WidgetTester tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding_completed': true,
+    });
+
+    await tester.pumpWidget(const ExpenseTrackerApp());
+    await tester.pumpAndSettle();
+
+    final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.dark);
+  });
+
+  testWidgets('settings dark mode toggle rebuilds app in light mode and persists', (
+    WidgetTester tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding_completed': true,
+      'selected_currency_code': 'USD',
+    });
+
+    await tester.pumpWidget(const ExpenseTrackerApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Settings'));
+    await tester.pumpAndSettle();
+    expect(find.text('PREFERENCES'), findsOneWidget);
+
+    await tester.tap(find.byType(Switch));
+    await tester.pumpAndSettle();
+
+    final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.light);
+    expect(find.text('PREFERENCES'), findsOneWidget);
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getBool('dark_mode_enabled'), false);
+  });
+
+  testWidgets('light mode analytics uses dark axis labels', (
+    WidgetTester tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding_completed': true,
+      'selected_currency_code': 'USD',
+      'dark_mode_enabled': false,
+      'cached_expenses': jsonEncode([
+        {
+          'id': 'trend-1',
+          'amount': 42.0,
+          'currencyCode': 'USD',
+          'category': 'Food',
+          'note': 'Lunch',
+          'paymentMethod': 'Cash',
+          'date': '2026-03-08T12:00:00.000',
+          'iconCodePoint': Icons.restaurant_outlined.codePoint,
+          'iconFontFamily': Icons.restaurant_outlined.fontFamily ?? 'MaterialIcons',
+          'iconFontPackage': Icons.restaurant_outlined.fontPackage ?? '',
+        },
+      ]),
+    });
+
+    await tester.pumpWidget(const ExpenseTrackerApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Analytics'));
+    await tester.pumpAndSettle();
+
+    final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(materialApp.themeMode, ThemeMode.light);
+
+    final mondayLabel = tester.widget<Text>(find.text('Mon'));
+    expect(mondayLabel.style?.color, const Color(0xFF475569));
   });
 
   testWidgets('completed onboarding is skipped on restart', (

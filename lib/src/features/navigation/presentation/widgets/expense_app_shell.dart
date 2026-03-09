@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/theme_controller.dart';
 import '../../../add_expense/presentation/screens/add_expense_screen.dart';
 import '../../../analytics/presentation/screens/analytics_screen.dart';
 import '../../../budget/presentation/screens/budget_screen.dart';
@@ -14,7 +15,12 @@ import '../bloc/navigation_bloc.dart';
 import 'app_bottom_navigation.dart';
 
 class ExpenseAppShell extends StatefulWidget {
-  const ExpenseAppShell({super.key});
+  const ExpenseAppShell({
+    super.key,
+    required this.themeController,
+  });
+
+  final ThemeController themeController;
 
   @override
   State<ExpenseAppShell> createState() => _ExpenseAppShellState();
@@ -49,7 +55,7 @@ class _ExpenseAppShellState extends State<ExpenseAppShell> {
       future: _hydrateFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
@@ -95,7 +101,7 @@ class _ExpenseAppShellState extends State<ExpenseAppShell> {
                         onPressed: () => _navigationBloc.changeTab(4),
                         shape: const CircleBorder(),
                         mini: false,
-                        child: const Icon(
+                        child: Icon(
                           Icons.add,
                           color: AppColors.textPrimary,
                         ),
@@ -140,7 +146,10 @@ class _ExpenseAppShellState extends State<ExpenseAppShell> {
           initialData: _expenseBloc.expenses,
           stream: _expenseBloc.stream,
           builder: (context, snapshot) {
-            return SettingsScreen(expenseBloc: _expenseBloc);
+            return SettingsScreen(
+              expenseBloc: _expenseBloc,
+              themeController: widget.themeController,
+            );
           },
         );
       case 4:

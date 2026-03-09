@@ -72,11 +72,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     _selectedCategory = selectedCategory;
 
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [AppColors.background, Color(0xFF030504)],
+          colors: [AppColors.background, AppColors.screenGradientEnd],
         ),
       ),
       child: SafeArea(
@@ -181,7 +181,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         end: Alignment.bottomCenter,
                         colors: [
                           AppColors.background.withValues(alpha: 0),
-                          AppColors.background.withValues(alpha: 0.92),
+                          AppColors.background.withValues(alpha: AppColors.isDarkMode ? 0.92 : 0.75),
                         ],
                       ),
                     ),
@@ -230,7 +230,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           controller: controller,
           autofocus: true,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          style: const TextStyle(color: AppColors.textPrimary),
+          style: TextStyle(color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: '0.00',
             prefixText: '${currency.symbol} ',
@@ -316,7 +316,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 (method) => ListTile(
                   title: Text(
                     method,
-                    style: const TextStyle(color: AppColors.textPrimary),
+                    style: TextStyle(color: AppColors.textPrimary),
                   ),
                   onTap: () => Navigator.of(context).pop(method),
                 ),
@@ -372,7 +372,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         content: TextField(
           controller: controller,
           autofocus: true,
-          style: const TextStyle(color: AppColors.textPrimary),
+          style: TextStyle(color: AppColors.textPrimary),
           decoration: const InputDecoration(hintText: 'Category name'),
         ),
         actions: [
@@ -418,10 +418,10 @@ class _ExpenseHeader extends StatelessWidget {
       children: [
         IconButton(
           onPressed: onClose,
-          icon: const Icon(Icons.close, color: AppColors.textPrimary),
+          icon: Icon(Icons.close, color: AppColors.textPrimary),
         ),
         const Spacer(),
-        const Text(
+        Text(
           'New Expense',
           style: TextStyle(
             color: AppColors.textPrimary,
@@ -465,7 +465,7 @@ class _AmountSection extends StatelessWidget {
       borderRadius: BorderRadius.circular(24),
       child: Column(
         children: [
-          const Text(
+          Text(
             'AMOUNT',
             style: TextStyle(
               color: AppColors.emerald,
@@ -488,7 +488,7 @@ class _AmountSection extends StatelessWidget {
                 ),
                 TextSpan(
                   text: amount.toStringAsFixed(2),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 62,
                     fontWeight: FontWeight.w800,
@@ -499,7 +499,7 @@ class _AmountSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Tap to edit amount',
             style: TextStyle(color: Color(0xFF4A6776), fontSize: 15),
           ),
@@ -521,8 +521,8 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            color: Colors.white70,
+          style: TextStyle(
+            color: AppColors.textSecondary,
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -531,7 +531,7 @@ class _SectionHeader extends StatelessWidget {
         const Spacer(),
         Text(
           action,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.emerald,
             fontSize: 13,
             fontWeight: FontWeight.w600,
@@ -551,8 +551,8 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(
-        color: Colors.white70,
+      style: TextStyle(
+        color: AppColors.textSecondary,
         fontSize: 12,
         fontWeight: FontWeight.w700,
         letterSpacing: 1.2,
@@ -637,10 +637,10 @@ class _CategoryRow extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: AppColors.border),
                     ),
-                    child: const Icon(Icons.add, color: AppColors.emerald),
+                    child: Icon(Icons.add, color: AppColors.emerald),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'ADD',
                     style: TextStyle(
                       color: AppColors.emerald,
@@ -678,8 +678,8 @@ class _FieldCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.white70,
+          style: TextStyle(
+            color: AppColors.textSecondary,
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -699,7 +699,7 @@ class _FieldCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     value,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -723,17 +723,17 @@ class _NotesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassCard(
-      gradient: const LinearGradient(
-        colors: [Color(0xFF012A22), Color(0xFF01211B)],
+      gradient: LinearGradient(
+        colors: [AppColors.notesCardStart, AppColors.notesCardEnd],
       ),
       radius: 16,
       child: TextField(
         controller: controller,
         maxLines: 4,
-        style: const TextStyle(color: AppColors.textPrimary),
-        decoration: const InputDecoration(
+        style: TextStyle(color: AppColors.textPrimary),
+        decoration: InputDecoration(
           hintText: 'Add details about this expense...',
-          hintStyle: TextStyle(color: Color(0xFF6C8590), fontSize: 15),
+          hintStyle: TextStyle(color: AppColors.textSecondary, fontSize: 15),
           border: InputBorder.none,
           isCollapsed: true,
         ),
@@ -784,7 +784,7 @@ class _CurrencyPickerDialogState extends State<CurrencyPickerDialog> {
       contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       title: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
               'Select Currency',
               style: TextStyle(color: AppColors.textPrimary),
@@ -793,7 +793,7 @@ class _CurrencyPickerDialogState extends State<CurrencyPickerDialog> {
           if (!widget.forceSelection)
             IconButton(
               onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.close, color: AppColors.textPrimary),
+              icon: Icon(Icons.close, color: AppColors.textPrimary),
             ),
         ],
       ),
@@ -805,7 +805,7 @@ class _CurrencyPickerDialogState extends State<CurrencyPickerDialog> {
             TextField(
               controller: _searchController,
               onChanged: (value) => setState(() => _query = value),
-              style: const TextStyle(color: AppColors.textPrimary),
+              style: TextStyle(color: AppColors.textPrimary),
               decoration: InputDecoration(
                 hintText: 'Search currency',
                 prefixIcon: const Icon(Icons.search),
@@ -825,7 +825,7 @@ class _CurrencyPickerDialogState extends State<CurrencyPickerDialog> {
                   shrinkWrap: true,
                   itemCount: filtered.length,
                   separatorBuilder: (_, _) =>
-                      const Divider(height: 1, color: AppColors.border),
+                      Divider(height: 1, color: AppColors.border),
                   itemBuilder: (context, index) {
                     final currency = filtered[index];
                     final selected =
@@ -834,11 +834,11 @@ class _CurrencyPickerDialogState extends State<CurrencyPickerDialog> {
                       contentPadding: EdgeInsets.zero,
                       title: Text(
                         currency.displayLabel,
-                        style: const TextStyle(color: AppColors.textPrimary),
+                        style: TextStyle(color: AppColors.textPrimary),
                       ),
                       subtitle: Text(
                         currency.symbol,
-                        style: const TextStyle(color: AppColors.textSecondary),
+                        style: TextStyle(color: AppColors.textSecondary),
                       ),
                       trailing: selected
                           ? const Icon(
@@ -874,7 +874,7 @@ class _ReceiptCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.emerald.withValues(alpha: 0.18)),
         ),
-        child: const Column(
+        child: Column(
           children: [
             Icon(Icons.cloud_upload_outlined, color: AppColors.emerald, size: 30),
             SizedBox(height: 10),
