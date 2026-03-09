@@ -18,6 +18,12 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cardGradient = LinearGradient(
+      colors: AppColors.isDarkMode
+          ? const [Color(0xFF1B1F24), Color(0xFF11151A)]
+          : [AppColors.settingsCardStart, AppColors.settingsCardEnd],
+    );
+
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -41,9 +47,7 @@ class SettingsScreen extends StatelessWidget {
                   GlassCard(
                     padding: EdgeInsets.zero,
                     radius: 18,
-                    gradient: LinearGradient(
-                      colors: [AppColors.settingsCardStart, AppColors.settingsCardEnd],
-                    ),
+                    gradient: cardGradient,
                     child: Column(
                       children: [
                         _SettingRow(
@@ -77,9 +81,7 @@ class SettingsScreen extends StatelessWidget {
                   GlassCard(
                     padding: EdgeInsets.zero,
                     radius: 18,
-                    gradient: LinearGradient(
-                      colors: [AppColors.settingsCardStart, AppColors.settingsCardEnd],
-                    ),
+                    gradient: cardGradient,
                     child: Column(
                       children: [
                         _SettingRow(
@@ -194,6 +196,7 @@ class _SettingRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accentColor = _iconColor(icon);
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -204,10 +207,10 @@ class _SettingRow extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppColors.emerald.withValues(alpha: 0.12),
+                color: accentColor.withValues(alpha: 0.14),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: AppColors.emerald),
+              child: Icon(icon, color: accentColor),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -257,6 +260,23 @@ class _SettingRow extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _iconColor(IconData icon) {
+    switch (icon) {
+      case Icons.attach_money_rounded:
+        return const Color(0xFF4ADE80);
+      case Icons.notifications_none_rounded:
+        return const Color(0xFF60A5FA);
+      case Icons.nightlight_round:
+        return const Color(0xFFF59E0B);
+      case Icons.ios_share_outlined:
+        return const Color(0xFFA78BFA);
+      case Icons.shield_outlined:
+        return const Color(0xFF22D3EE);
+      default:
+        return AppColors.emerald;
+    }
   }
 }
 
