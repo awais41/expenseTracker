@@ -62,6 +62,7 @@ class SettingsScreen extends StatelessWidget {
                           icon: Icons.notifications_none_rounded,
                           title: 'Notifications',
                           subtitle: 'Manage alerts and sounds',
+                          isEnabled: false,
                         ),
                         Divider(height: 1, color: AppColors.border),
                         _SettingRow(
@@ -88,12 +89,14 @@ class SettingsScreen extends StatelessWidget {
                           icon: Icons.ios_share_outlined,
                           title: 'Export Reports',
                           subtitle: 'Download your financial history',
+                          isEnabled: false,
                         ),
                         Divider(height: 1, color: AppColors.border),
                         _SettingRow(
                           icon: Icons.shield_outlined,
                           title: 'Security',
                           subtitle: '2FA, Passwords, Biometrics',
+                          isEnabled: false,
                         ),
                       ],
                     ),
@@ -185,6 +188,7 @@ class _SettingRow extends StatelessWidget {
     this.trailingLabel,
     this.trailing,
     this.onTap,
+    this.isEnabled = true,
   });
 
   final IconData icon;
@@ -193,12 +197,26 @@ class _SettingRow extends StatelessWidget {
   final String? trailingLabel;
   final Widget? trailing;
   final VoidCallback? onTap;
+  final bool isEnabled;
 
   @override
   Widget build(BuildContext context) {
     final accentColor = _iconColor(icon);
+    final iconBackgroundColor = isEnabled
+        ? accentColor.withValues(alpha: 0.14)
+        : AppColors.textSecondary.withValues(alpha: 0.12);
+    final resolvedIconColor = isEnabled
+        ? accentColor
+        : AppColors.textSecondary.withValues(alpha: 0.72);
+    final titleColor = isEnabled
+        ? AppColors.textPrimary
+        : AppColors.textSecondary.withValues(alpha: 0.9);
+    final subtitleColor = isEnabled
+        ? AppColors.textSecondary
+        : AppColors.textSecondary.withValues(alpha: 0.72);
+
     return InkWell(
-      onTap: onTap,
+      onTap: isEnabled ? onTap : null,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         child: Row(
@@ -207,10 +225,10 @@ class _SettingRow extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: accentColor.withValues(alpha: 0.14),
+                color: iconBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: accentColor),
+              child: Icon(icon, color: resolvedIconColor),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -220,7 +238,7 @@ class _SettingRow extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
-                      color: AppColors.textPrimary,
+                      color: titleColor,
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                     ),
@@ -229,7 +247,7 @@ class _SettingRow extends StatelessWidget {
                   Text(
                     subtitle,
                     style: TextStyle(
-                      color: AppColors.textSecondary,
+                      color: subtitleColor,
                       fontSize: 14,
                     ),
                   ),
@@ -240,7 +258,16 @@ class _SettingRow extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (trailingLabel != null)
+                    if (!isEnabled)
+                      Text(
+                        'Coming soon',
+                        style: TextStyle(
+                          color: AppColors.textSecondary.withValues(alpha: 0.72),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                    else if (trailingLabel != null)
                       Text(
                         trailingLabel!,
                         style: TextStyle(
@@ -249,11 +276,13 @@ class _SettingRow extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                    const SizedBox(width: 6),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      color: AppColors.textSecondary,
-                    ),
+                    if (isEnabled) ...[
+                      const SizedBox(width: 6),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: AppColors.textSecondary,
+                      ),
+                    ],
                   ],
                 ),
           ],

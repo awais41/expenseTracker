@@ -52,9 +52,6 @@ class Expense {
       'note': note,
       'paymentMethod': paymentMethod,
       'date': date.toIso8601String(),
-      'iconCodePoint': icon.codePoint,
-      'iconFontFamily': icon.fontFamily ?? 'MaterialIcons',
-      'iconFontPackage': icon.fontPackage ?? '',
     };
   }
 
@@ -67,13 +64,26 @@ class Expense {
       note: map['note'] as String,
       paymentMethod: map['paymentMethod'] as String,
       date: DateTime.parse(map['date'] as String),
-      icon: IconData(
-        map['iconCodePoint'] as int,
-        fontFamily: map['iconFontFamily'] as String?,
-        fontPackage: (map['iconFontPackage'] as String?)?.isEmpty ?? true
-            ? null
-            : map['iconFontPackage'] as String,
-      ),
+      icon: _iconForCategory(map['category'] as String),
     );
+  }
+
+  static IconData _iconForCategory(String category) {
+    switch (category) {
+      case 'Food':
+        return Icons.restaurant_outlined;
+      case 'Travel':
+        return Icons.directions_car_outlined;
+      case 'Shopping':
+        return Icons.shopping_bag_outlined;
+      case 'Health':
+        return Icons.medical_services_outlined;
+      case 'Bills':
+        return Icons.receipt_long_outlined;
+      case 'Entertainment':
+        return Icons.movie_creation_outlined;
+      default:
+        return Icons.category_outlined;
+    }
   }
 }
