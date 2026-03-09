@@ -299,8 +299,7 @@ class ExpenseBloc {
       case 'Entertainment':
         return const Color(0xFFFFB020);
       default:
-        final index = category.hashCode.abs() % _fallbackColors.length;
-        return _fallbackColors[index];
+        return _customCategoryColor(category);
     }
   }
 
@@ -371,12 +370,21 @@ class ExpenseBloc {
     );
   }
 
-  static const _fallbackColors = <Color>[
-    Color(0xFF22D3EE),
-    Color(0xFFA3E635),
-    Color(0xFFF472B6),
-    Color(0xFFFFB020),
-    Color(0xFF60A5FA),
-    Color(0xFF4ADE80),
-  ];
+  Color _customCategoryColor(String category) {
+    final customCategories = <String>{
+      ..._customCategories,
+      ..._categoryBudgets.keys.where((item) => !isDefaultBudgetCategory(item)),
+      ..._expenses
+          .map((expense) => expense.category)
+          .where((item) => !isDefaultBudgetCategory(item)),
+    }.toList()
+      ..sort();
+
+    final index = customCategories.indexOf(category);
+    final resolvedIndex = index >= 0 ? index : 0;
+    final hue = (resolvedIndex * 137.508) % 360;
+    final saturation = resolvedIndex.isEven ? 0.78 : 0.68;
+    final lightness = resolvedIndex.isEven ? 0.58 : 0.52;
+    return HSLColor.fromAHSL(1, hue, saturation, lightness).toColor();
+  }
 }

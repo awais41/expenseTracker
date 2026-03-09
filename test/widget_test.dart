@@ -103,7 +103,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Get Started'), findsOneWidget);
-    expect(find.text('Aura'), findsOneWidget);
+    expect(
+      find.text(
+        'Experience the most aesthetic way to\ntrack expenses and grow your savings\nwith luxury precision.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Aura'), findsNothing);
     expect(find.text('Sign In'), findsNothing);
 
     final image = tester.widget<Image>(find.byType(Image).first);

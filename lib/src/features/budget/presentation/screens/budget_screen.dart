@@ -89,28 +89,31 @@ class BudgetScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _TopBudgetCard(
-                          title: 'Monthly Budget',
-                          value: monthlyBudget > 0
-                              ? expenseBloc.formatCurrency(monthlyBudget)
-                              : 'Set now',
-                          icon: Icons.account_balance_wallet_outlined,
-                          bright: true,
-                          onTap: () => _showBudgetDialog(context),
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: _TopBudgetCard(
+                            title: 'Monthly Budget',
+                            value: monthlyBudget > 0
+                                ? expenseBloc.formatCurrency(monthlyBudget)
+                                : 'Set now',
+                            icon: Icons.account_balance_wallet_outlined,
+                            bright: true,
+                            onTap: () => _showBudgetDialog(context),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: _TopBudgetCard(
-                          title: 'Total Saved',
-                          value: expenseBloc.formatCurrency(totalSaved),
-                          icon: Icons.savings_outlined,
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: _TopBudgetCard(
+                            title: 'Total Saved',
+                            value: expenseBloc.formatCurrency(totalSaved),
+                            icon: Icons.savings_outlined,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 22),
                   _GoalCard(
@@ -271,8 +274,9 @@ class BudgetScreen extends StatelessWidget {
     BuildContext context,
     List<String> categories,
   ) async {
+    final parentContext = context;
     await showModalBottomSheet<void>(
-      context: context,
+      context: parentContext,
       backgroundColor: AppColors.surface,
       builder: (context) => SafeArea(
         child: ListView(
@@ -303,7 +307,10 @@ class BudgetScreen extends StatelessWidget {
                         tooltip: 'Edit',
                         onPressed: () async {
                           Navigator.of(context).pop();
-                          await _showCategoryBudgetDialog(context, category);
+                          await _showCategoryBudgetDialog(
+                            parentContext,
+                            category,
+                          );
                         },
                         icon: const Icon(
                           Icons.edit_outlined,
@@ -315,10 +322,10 @@ class BudgetScreen extends StatelessWidget {
                         onPressed: () async {
                           Navigator.of(context).pop();
                           await expenseBloc.deleteCategory(category);
-                          if (!context.mounted) {
+                          if (!parentContext.mounted) {
                             return;
                           }
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          ScaffoldMessenger.of(parentContext).showSnackBar(
                             SnackBar(content: Text('$category removed')),
                           );
                         },
@@ -445,8 +452,8 @@ class _TopBudgetCard extends StatelessWidget {
               value,
               style: const TextStyle(
                 color: AppColors.textPrimary,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -523,10 +530,16 @@ class _GoalCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 16),
-              SizedBox(
-                width: 68,
-                height: 68,
+              const SizedBox(width: 20),
+
+              Container(
+                width: 88,
+                height: 88,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.05),
+                ),
+                padding: const EdgeInsets.all(10),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -541,6 +554,7 @@ class _GoalCard extends StatelessWidget {
                       style: const TextStyle(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w700,
+                        fontSize: 10,
                       ),
                     ),
                   ],
@@ -599,6 +613,7 @@ class _BudgetCategoryTile extends StatelessWidget {
       child: Column(
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 44,
@@ -614,32 +629,49 @@ class _BudgetCategoryTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      category,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            category,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Flexible(
+                          child: Text(
+                            '${currency.formatCurrency(spent)} / ${budget > 0 ? currency.formatCurrency(budget) : 'Set'}',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.right,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 6),
                     Text(
                       status,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: statusColor,
-                        fontSize: 13,
+                        fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
-                ),
-              ),
-              Text(
-                '${currency.formatCurrency(spent)} / ${budget > 0 ? currency.formatCurrency(budget) : 'Set'}',
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],
