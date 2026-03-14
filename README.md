@@ -1,39 +1,57 @@
 # Expense Tracker
 
-A local-first Flutter expense tracker focused on personal budgeting, clean visuals, and practical day-to-day expense management.
+A local-first Flutter expense tracker with a polished dark/light UI, onboarding, live analytics, budgeting, shared currency management, and offline persistence.
 
-This open-source version ships as a standalone personal finance app with onboarding, a home dashboard, analytics, budgeting, theme switching, currency conversion, and local persistence. Shared/group expense work is intentionally kept out of the public runtime and parked as future experimental work.
+This project is built as a production-shaped mobile app shell with modular feature folders, reusable theme primitives, and a simple BLoC-style state layer centered around local persistence.
 
-## Highlights
+## Screenshots
 
-- Local-first personal expense tracking
-- Premium dark/light UI built with native Flutter widgets
-- Onboarding shown once on first launch
-- Home dashboard with monthly spending overview
-- Analytics screen with trends and category breakdowns
-- Monthly and per-category budgeting
-- Shared category management between Budget and Add Expense
-- Currency selection with conversion of saved values
+| Onboarding | Add Expense |
+| --- | --- |
+| ![Onboarding](assets/design_concept/Background.png) | ![Add Expense](assets/design_concept/Add%20expense.png) |
+
+| Expense Screen | Budget / Group Concept |
+| --- | --- |
+| ![Expense Screen](assets/design_concept/expense%20screen.png) | ![Design Concept](assets/design_concept/group%20expense.png) |
+
+> Note: The app is implemented as native Flutter UI. The images in `assets/design_concept/` are design references used during development.
+
+## Features
+
+- Onboarding flow with first-use gating
+- Home dashboard with:
+  - empty-state guidance for new users
+  - recent transactions
+  - spending summaries
+  - monthly budget overview
+- Add Expense flow with:
+  - amount, category, date, note, and payment method
+  - first-time currency selection
+  - add-category option directly from the form
+  - disabled receipt area marked `Coming soon`
+- Spending Analytics screen with:
+  - weekly trend view
+  - category breakdown
+  - insight card
+- Budget screen with:
+  - monthly budget editing
+  - per-category budget editing
+  - add/delete category support
+  - shared category source with Add Expense
+- Settings screen with:
+  - currency change
+  - local app preferences
+  - theme switching
 - Local persistence using `shared_preferences`
+- Currency conversion using latest available exchange rates with cached fallback
 
-## Public App Scope
+## Tech Stack
 
-The public app ships with:
-
-- `Home`
-- `Analytics`
-- `Budget`
-- `Settings`
-- pushed `Add Expense` flow
-
-The following are not part of the shipped open-source app:
-
-- sign in / authentication
-- cloud sync
-- group expense sharing
-- backend-connected Splitwise-style flows
-- export/import
-- notifications
+- Flutter
+- Dart
+- `shared_preferences`
+- Material 3
+- Feature-based modular structure
 
 ## Project Structure
 
@@ -61,101 +79,3 @@ lib/src
     ├── navigation
     ├── onboarding
     └── settings
-```
-
-## Design Notes
-
-- The UI is based on local concept assets under `assets/design_concept/`.
-- `Background.png` is used in onboarding.
-- Screens are built as native Flutter UI, not embedded screenshots.
-
-## Persistence
-
-The public app stores data locally with `shared_preferences`.
-
-Persisted values include:
-
-- onboarding completion
-- selected currency
-- expenses
-- monthly budget
-- category budgets
-- custom categories
-- hidden/deleted categories
-- cached exchange-rate data
-- theme mode
-
-## Currency Behavior
-
-- The first expense requires a currency selection.
-- Later currency changes happen from Settings.
-- Changing currency converts saved expense and budget values.
-- Cached exchange rates are used as a fallback when the network is unavailable.
-
-## Experimental Work
-
-You will find non-shipping collaboration and backend work under `lib/src/experimental/`.
-
-That code is intentionally isolated from the public app runtime so the open-source release stays coherent and easy to understand. See [FUTURE_FEATURES.md](/Users/awais/Documents/Development/F_Projects/expenseTracker-clean/FUTURE_FEATURES.md) for details.
-
-## Getting Started
-
-### Prerequisites
-
-- Flutter SDK
-- Dart SDK
-- Android Studio and/or Xcode for emulator/device targets
-
-### Install dependencies
-
-```bash
-flutter pub get
-```
-
-### Run the app
-
-```bash
-flutter run
-```
-
-### Static analysis
-
-```bash
-flutter analyze
-```
-
-### Tests
-
-```bash
-flutter test
-```
-
-## Development Notes
-
-- The public runtime does not depend on any backend configuration.
-- Experimental API/client code is kept out of the shipping app path.
-- Expense values in the local app use the existing personal expense domain model.
-- Experimental online group modules use backend-style IDs and minor-unit money handling.
-
-## Testing Coverage
-
-The current test suite covers:
-
-- onboarding entry
-- public shell navigation
-- theme switching
-- category budget behavior
-- currency conversion behavior
-- experimental shared-expense balance logic
-
-## Roadmap
-
-- stronger local persistence if data complexity grows
-- transaction editing and filtering improvements
-- richer analytics
-- export/import support
-- revisit shared expense flows as a future experimental track
-
-## License
-
-This project is released under the MIT License. See [LICENSE](/Users/awais/Documents/Development/F_Projects/expenseTracker-clean/LICENSE).
