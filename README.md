@@ -6,13 +6,17 @@ This project is built as a production-shaped mobile app shell with modular featu
 
 ## Screenshots
 
-| Onboarding | Add Expense |
+| Dashboard | Add Expense |
 | --- | --- |
-| ![Onboarding](assets/design_concept/Background.png) | ![Add Expense](assets/design_concept/Add%20expense.png) |
+| ![Dashboard](assets/design_concept/dashboard%20screen.png) | ![Add Expense](assets/design_concept/add%20expense%20screen.png) |
 
-| Expense Screen | Design Concept |
+| Analytics | Budget |
 | --- | --- |
-| ![Expense Screen](assets/design_concept/expense%20screen.png) | ![Design Concept](assets/design_concept/group%20expense.png) |
+| ![Analytics](assets/design_concept/Analytics%20screen.png) | ![Budget](assets/design_concept/budget%20screen.png) |
+
+| New User Dashboard | Settings |
+| --- | --- |
+| ![New User Dashboard](assets/design_concept/new%20user%20dashboard%20screen.png) | ![Settings](assets/design_concept/setting%20screen.png) |
 
 > Note: The app is implemented as native Flutter UI. The files in `assets/design_concept/` are design references used during development.
 
@@ -150,7 +154,7 @@ Notes:
 
 ## Design Notes
 
-The app UI is based on local design assets under `assets/design_concept/`, with `Background.png` used for onboarding. The rest of the app is implemented as native Flutter UI rather than embedding static screenshots.
+The app UI is based on local design assets under `assets/design_concept/`. The shipped screens are implemented as native Flutter UI rather than embedding static screenshots.
 
 ## Experimental / Future Work
 
