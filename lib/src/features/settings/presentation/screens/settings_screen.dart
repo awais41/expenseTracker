@@ -101,6 +101,24 @@ class SettingsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 28),
+                  const _SectionLabel('ABOUT'),
+                  const SizedBox(height: 14),
+                  GlassCard(
+                    padding: EdgeInsets.zero,
+                    radius: 18,
+                    gradient: cardGradient,
+                    child: const Column(
+                      children: [
+                        _SettingRow(
+                          icon: Icons.lock_outline_rounded,
+                          title: 'Local-first by design',
+                          subtitle: 'Your expenses and budgets stay on this device.',
+                          trailing: SizedBox.shrink(),
+                        ),
+                      ],
+                    ),
+                  ),
                 ]),
               ),
             ),

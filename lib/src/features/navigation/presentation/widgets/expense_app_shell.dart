@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/theme_controller.dart';
@@ -9,7 +8,6 @@ import '../../../budget/presentation/screens/budget_screen.dart';
 import '../../../dashboard/presentation/screens/dashboard_screen.dart';
 import '../../../expenses/domain/models/expense.dart';
 import '../../../expenses/presentation/bloc/expense_bloc.dart';
-import '../../../onboarding/presentation/screens/onboarding_screen.dart';
 import '../../../settings/presentation/screens/settings_screen.dart';
 import '../bloc/navigation_bloc.dart';
 import 'app_bottom_navigation.dart';
@@ -27,19 +25,16 @@ class ExpenseAppShell extends StatefulWidget {
 }
 
 class _ExpenseAppShellState extends State<ExpenseAppShell> {
-  static const _onboardingCompletedKey = 'onboarding_completed';
-
   late final NavigationBloc _navigationBloc;
   late final ExpenseBloc _expenseBloc;
   late final Future<void> _hydrateFuture;
-  bool _showOnboarding = true;
 
   @override
   void initState() {
     super.initState();
     _navigationBloc = NavigationBloc();
     _expenseBloc = ExpenseBloc();
-    _hydrateFuture = _hydrateAppState();
+    _hydrateFuture = _expenseBloc.hydrate();
   }
 
   @override
@@ -55,16 +50,8 @@ class _ExpenseAppShellState extends State<ExpenseAppShell> {
       future: _hydrateFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return Scaffold(
+          return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        if (_showOnboarding) {
-          return OnboardingScreen(
-            onGetStarted: () {
-              _completeOnboarding();
-            },
           );
         }
 
@@ -100,11 +87,7 @@ class _ExpenseAppShellState extends State<ExpenseAppShell> {
                       child: FloatingActionButton(
                         onPressed: () => _navigationBloc.changeTab(4),
                         shape: const CircleBorder(),
-                        mini: false,
-                        child: Icon(
-                          Icons.add,
-                          color: AppColors.textPrimary,
-                        ),
+                        child: Icon(Icons.add, color: AppColors.textPrimary),
                       ),
                     )
                   : null,
@@ -120,39 +103,33 @@ class _ExpenseAppShellState extends State<ExpenseAppShell> {
   Widget _buildScreen(int currentIndex) {
     switch (currentIndex) {
       case 0:
-        return _dashboard(showWalletVariant: false);
+        return _dashboard();
       case 1:
         return StreamBuilder<List<Expense>>(
           initialData: _expenseBloc.expenses,
           stream: _expenseBloc.stream,
-          builder: (context, snapshot) {
-            return AnalyticsScreen(
-              expenseBloc: _expenseBloc,
-              expenses: snapshot.data ?? const <Expense>[],
-              onBackToHome: () => _navigationBloc.changeTab(0),
-            );
-          },
+          builder: (context, snapshot) => AnalyticsScreen(
+            expenseBloc: _expenseBloc,
+            expenses: snapshot.data ?? const <Expense>[],
+          ),
         );
       case 2:
         return StreamBuilder<List<Expense>>(
           initialData: _expenseBloc.expenses,
           stream: _expenseBloc.stream,
-          builder: (context, snapshot) {
-            return BudgetScreen(expenseBloc: _expenseBloc);
-          },
+          builder: (context, snapshot) => BudgetScreen(expenseBloc: _expenseBloc),
         );
       case 3:
         return StreamBuilder<List<Expense>>(
           initialData: _expenseBloc.expenses,
           stream: _expenseBloc.stream,
-          builder: (context, snapshot) {
-            return SettingsScreen(
-              expenseBloc: _expenseBloc,
-              themeController: widget.themeController,
-            );
-          },
+          builder: (context, snapshot) => SettingsScreen(
+            expenseBloc: _expenseBloc,
+            themeController: widget.themeController,
+          ),
         );
       case 4:
+        // Add Expense stays a pushed-style flow outside the bottom navigation.
         return AddExpenseScreen(
           expenseBloc: _expenseBloc,
           initialCurrency: _expenseBloc.selectedCurrency,
@@ -164,11 +141,11 @@ class _ExpenseAppShellState extends State<ExpenseAppShell> {
           onClose: () => _navigationBloc.changeTab(0),
         );
       default:
-        return _dashboard(showWalletVariant: false);
+        return _dashboard();
     }
   }
 
-  Widget _dashboard({required bool showWalletVariant}) {
+  Widget _dashboard() {
     return StreamBuilder<List<Expense>>(
       initialData: _expenseBloc.expenses,
       stream: _expenseBloc.stream,
@@ -176,33 +153,9 @@ class _ExpenseAppShellState extends State<ExpenseAppShell> {
         return DashboardScreen(
           expenses: snapshot.data ?? const <Expense>[],
           expenseBloc: _expenseBloc,
-          showWalletVariant: showWalletVariant,
           onAddExpense: () => _navigationBloc.changeTab(4),
         );
       },
     );
-  }
-
-  Future<void> _hydrateAppState() async {
-    await _expenseBloc.hydrate();
-    final preferences = await SharedPreferences.getInstance();
-    final onboardingCompleted =
-        preferences.getBool(_onboardingCompletedKey) ?? false;
-    _showOnboarding = !onboardingCompleted;
-    if (!onboardingCompleted) {
-      await preferences.setBool(_onboardingCompletedKey, true);
-    }
-  }
-
-  Future<void> _completeOnboarding() async {
-    if (mounted) {
-      setState(() => _showOnboarding = false);
-    }
-    await _persistOnboardingCompleted();
-  }
-
-  Future<void> _persistOnboardingCompleted() async {
-    final preferences = await SharedPreferences.getInstance();
-    await preferences.setBool(_onboardingCompletedKey, true);
   }
 }

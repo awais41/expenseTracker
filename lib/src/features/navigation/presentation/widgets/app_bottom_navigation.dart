@@ -16,7 +16,7 @@ class AppBottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     const items = <({IconData icon, String label})>[
       (icon: Icons.home_outlined, label: 'Home'),
-      (icon: Icons.show_chart_rounded, label: 'Analytics'),
+      (icon: Icons.analytics_outlined, label: 'Analytics'),
       (icon: Icons.pie_chart_outline_rounded, label: 'Budget'),
       (icon: Icons.settings_outlined, label: 'Settings'),
     ];

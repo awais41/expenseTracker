@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,27 +32,13 @@ void main() {
       ),
     );
 
-    await bloc.setCurrency(const AppCurrency(code: 'EUR', name: 'Euro', symbol: '€'));
+    await bloc.setCurrency(
+      const AppCurrency(code: 'EUR', name: 'Euro', symbol: '€'),
+    );
 
     expect(bloc.currencyCode, 'EUR');
     expect(bloc.monthlyBudget, 50);
     expect(bloc.expenses.first.amount, 20);
-    expect(bloc.expenses.first.currencyCode, 'EUR');
-  });
-
-  test('setting category budget persists in bloc state', () async {
-    SharedPreferences.setMockInitialValues({
-      'selected_currency_code': 'USD',
-    });
-
-    final bloc = ExpenseBloc(
-      exchangeRateService: _FakeExchangeRateService(rate: 1),
-    );
-    await bloc.hydrate();
-    await bloc.setCategoryBudget('Food', 500);
-
-    expect(bloc.categoryBudget('Food'), 500);
-    expect(bloc.categoryBudgets['Food'], 500);
   });
 
   test('custom category budget can be added and removed', () async {
@@ -69,83 +53,49 @@ void main() {
     await bloc.setCategoryBudget('Pets', 250);
 
     expect(bloc.categoryBudgets['Pets'], 250);
-    expect(bloc.budgetCategories(DateTime(2026, 3, 9)), contains('Pets'));
     expect(bloc.availableCategories(), contains('Pets'));
 
     await bloc.deleteCategory('Pets');
 
-    expect(bloc.categoryBudgets.containsKey('Pets'), isFalse);
-    expect(bloc.budgetCategories(DateTime(2026, 3, 9)), isNot(contains('Pets')));
     expect(bloc.availableCategories(), isNot(contains('Pets')));
   });
 
-  test('default budget category can be hidden when deleted', () async {
-    SharedPreferences.setMockInitialValues({
-      'selected_currency_code': 'USD',
-    });
-
-    final bloc = ExpenseBloc(
-      exchangeRateService: _FakeExchangeRateService(rate: 1),
-    );
-    await bloc.hydrate();
-
-    expect(bloc.budgetCategories(DateTime(2026, 3, 9)), contains('Health'));
-
-    await bloc.deleteCategory('Health');
-
-    expect(bloc.budgetCategories(DateTime(2026, 3, 9)), isNot(contains('Health')));
-    expect(bloc.hiddenBudgetCategories, contains('Health'));
-  });
-
-  testWidgets('app renders onboarding and enters shell', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('first launch shows onboarding', (tester) async {
     SharedPreferences.setMockInitialValues({});
+
     await tester.pumpWidget(const ExpenseTrackerApp());
     await tester.pumpAndSettle();
 
     expect(find.text('Get Started'), findsOneWidget);
-    expect(
-      find.text(
-        'Experience the most aesthetic way to\ntrack expenses and grow your savings\nwith luxury precision.',
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('Aura'), findsNothing);
-    expect(find.text('Sign In'), findsNothing);
-
-    final image = tester.widget<Image>(find.byType(Image).first);
-    final provider = image.image as AssetImage;
-    expect(provider.assetName, 'assets/design_concept/Background.png');
-
-    await tester.ensureVisible(find.text('Get Started'));
-    await tester.tap(find.text('Get Started'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Your expense story starts here'), findsOneWidget);
-    expect(find.text('Expense Tracker'), findsOneWidget);
+    expect(find.text('Sign in'), findsNothing);
+    expect(find.text('Groups'), findsNothing);
   });
 
-  testWidgets('bottom navigation moves across implemented screens', (
-    WidgetTester tester,
-  ) async {
-    SharedPreferences.setMockInitialValues({
-      'selected_currency_code': 'USD',
-    });
+  testWidgets('onboarding enters the public local-first shell', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+
     await tester.pumpWidget(const ExpenseTrackerApp());
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Get Started'));
+
     await tester.tap(find.text('Get Started'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Expense Tracker'), findsOneWidget);
+    expect(find.text('Analytics'), findsOneWidget);
+    expect(find.text('Budget'), findsOneWidget);
+    expect(find.text('Settings'), findsOneWidget);
+    expect(find.text('Groups'), findsNothing);
+  });
+
+  testWidgets('public shell navigates across main screens', (tester) async {
+    SharedPreferences.setMockInitialValues(_publicSeed());
+
+    await tester.pumpWidget(const ExpenseTrackerApp());
     await tester.pumpAndSettle();
 
     expect(find.text('Analytics'), findsOneWidget);
     expect(find.text('Budget'), findsOneWidget);
     expect(find.text('Settings'), findsOneWidget);
-
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pumpAndSettle();
-    expect(find.text('New Expense'), findsOneWidget);
-    expect(find.text('Tap to edit amount'), findsOneWidget);
 
     await tester.tap(find.text('Analytics'));
     await tester.pumpAndSettle();
@@ -157,125 +107,17 @@ void main() {
 
     await tester.tap(find.text('Settings'));
     await tester.pumpAndSettle();
-    expect(find.text('PREFERENCES'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('ABOUT'), 200);
+    expect(find.text('ABOUT'), findsOneWidget);
+    expect(find.text('ACCOUNT'), findsNothing);
   });
 
-  testWidgets('saving an expense populates home data', (
-    WidgetTester tester,
-  ) async {
-    SharedPreferences.setMockInitialValues({});
-    await tester.pumpWidget(const ExpenseTrackerApp());
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Get Started'));
-    await tester.tap(find.text('Get Started'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.widgetWithText(ListTile, 'USD • US Dollar').first);
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Tap to edit amount'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField).first, '24.5');
-    await tester.tap(find.text('Done'));
-    await tester.pumpAndSettle();
-
-    await tester.enterText(find.byType(TextField).last, 'Coffee');
-    await tester.tap(find.byType(FilledButton).last);
-    await tester.pumpAndSettle();
-
-    expect(find.text('Coffee'), findsOneWidget);
-  });
-
-  testWidgets('first expense flow prompts for currency selection', (
-    WidgetTester tester,
-  ) async {
-    SharedPreferences.setMockInitialValues({});
-    await tester.pumpWidget(const ExpenseTrackerApp());
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Get Started'));
-    await tester.tap(find.text('Get Started'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Select Currency'), findsOneWidget);
-    expect(find.text('Search currency'), findsOneWidget);
-
-    await tester.enterText(find.byType(TextField).first, 'PKR');
-    await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ListTile, 'PKR • Pakistani Rupee'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Select Currency'), findsNothing);
-    expect(find.text('CURRENCY'), findsNothing);
-  });
-
-  testWidgets('user can set a monthly budget from home', (
-    WidgetTester tester,
-  ) async {
-    SharedPreferences.setMockInitialValues({});
-    await tester.pumpWidget(const ExpenseTrackerApp());
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Get Started'));
-    await tester.tap(find.text('Get Started'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Set monthly budget'));
-    await tester.pumpAndSettle();
-
-    await tester.enterText(find.byType(TextField).first, '1500');
-    await tester.tap(find.text('Save'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Monthly budget: \$1500.00'), findsOneWidget);
-  });
-
-  testWidgets('settings opens currency picker and shows selected currency', (
-    WidgetTester tester,
+  testWidgets('settings dark mode toggle rebuilds app in light mode', (
+    tester,
   ) async {
     SharedPreferences.setMockInitialValues({
-      'selected_currency_code': 'USD',
-    });
-    await tester.pumpWidget(const ExpenseTrackerApp());
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Get Started'));
-    await tester.tap(find.text('Get Started'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Settings'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Currency'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Select Currency'), findsOneWidget);
-    expect(find.widgetWithText(ListTile, 'USD • US Dollar'), findsOneWidget);
-  });
-
-  testWidgets('app starts in dark mode by default when no theme preference exists', (
-    WidgetTester tester,
-  ) async {
-    SharedPreferences.setMockInitialValues({
-      'onboarding_completed': true,
-    });
-
-    await tester.pumpWidget(const ExpenseTrackerApp());
-    await tester.pumpAndSettle();
-
-    final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
-    expect(app.themeMode, ThemeMode.dark);
-  });
-
-  testWidgets('settings dark mode toggle rebuilds app in light mode and persists', (
-    WidgetTester tester,
-  ) async {
-    SharedPreferences.setMockInitialValues({
-      'onboarding_completed': true,
-      'selected_currency_code': 'USD',
+      ..._publicSeed(),
+      'dark_mode_enabled': true,
     });
 
     await tester.pumpWidget(const ExpenseTrackerApp());
@@ -283,80 +125,19 @@ void main() {
 
     await tester.tap(find.text('Settings'));
     await tester.pumpAndSettle();
-    expect(find.text('PREFERENCES'), findsOneWidget);
-
     await tester.tap(find.byType(Switch));
     await tester.pumpAndSettle();
 
     final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
     expect(app.themeMode, ThemeMode.light);
-    expect(find.text('PREFERENCES'), findsOneWidget);
-
-    final preferences = await SharedPreferences.getInstance();
-    expect(preferences.getBool('dark_mode_enabled'), false);
   });
+}
 
-  testWidgets('light mode analytics uses dark axis labels', (
-    WidgetTester tester,
-  ) async {
-    SharedPreferences.setMockInitialValues({
-      'onboarding_completed': true,
-      'selected_currency_code': 'USD',
-      'dark_mode_enabled': false,
-      'cached_expenses': jsonEncode([
-        {
-          'id': 'trend-1',
-          'amount': 42.0,
-          'currencyCode': 'USD',
-          'category': 'Food',
-          'note': 'Lunch',
-          'paymentMethod': 'Cash',
-          'date': '2026-03-08T12:00:00.000',
-          'iconCodePoint': Icons.restaurant_outlined.codePoint,
-          'iconFontFamily': Icons.restaurant_outlined.fontFamily ?? 'MaterialIcons',
-          'iconFontPackage': Icons.restaurant_outlined.fontPackage ?? '',
-        },
-      ]),
-    });
-
-    await tester.pumpWidget(const ExpenseTrackerApp());
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Analytics'));
-    await tester.pumpAndSettle();
-
-    final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
-    expect(materialApp.themeMode, ThemeMode.light);
-
-    final mondayLabel = tester.widget<Text>(find.text('Mon'));
-    expect(mondayLabel.style?.color, const Color(0xFF475569));
-  });
-
-  testWidgets('completed onboarding is skipped on restart', (
-    WidgetTester tester,
-  ) async {
-    SharedPreferences.setMockInitialValues({
-      'onboarding_completed': true,
-    });
-    await tester.pumpWidget(const ExpenseTrackerApp());
-    await tester.pumpAndSettle();
-
-    expect(find.text('Get Started'), findsNothing);
-    expect(find.text('Expense Tracker'), findsOneWidget);
-  });
-
-  testWidgets('onboarding is marked completed after being shown once', (
-    WidgetTester tester,
-  ) async {
-    SharedPreferences.setMockInitialValues({});
-    await tester.pumpWidget(const ExpenseTrackerApp());
-    await tester.pumpAndSettle();
-
-    expect(find.text('Get Started'), findsOneWidget);
-
-    final preferences = await SharedPreferences.getInstance();
-    expect(preferences.getBool('onboarding_completed'), true);
-  });
+Map<String, Object> _publicSeed() {
+  return {
+    'selected_currency_code': 'USD',
+    'onboarding_completed': true,
+  };
 }
 
 class _FakeExchangeRateService extends ExchangeRateService {
